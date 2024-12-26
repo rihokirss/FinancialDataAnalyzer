@@ -1,0 +1,84 @@
+<%- include('partials/_head') %>
+<%- include('partials/_header') %>
+
+<div class="container mt-5">
+  <h1><%= company.name %> - Financial Data</h1>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h2>Quarterly Data</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Period</th>
+            <th>Taxes</th>
+            <th>Labor Taxes</th>
+            <th>Revenue</th>
+            <th>Employees</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% company.financialData.forEach(data => { %>
+            <tr>
+              <td><%= data.period %></td>
+              <td><%= data.taxes ? data.taxes.toLocaleString('et-EE') : 'N/A' %> €</td>
+              <td><%= data.laborTaxes ? data.laborTaxes.toLocaleString('et-EE') : 'N/A' %> €</td>
+              <td><%= data.revenue ? data.revenue.toLocaleString('et-EE') : 'N/A' %> €</td>
+              <td><%= data.employees ?? 'N/A' %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h2>Historical Trends</h2>
+      <canvas id="financialChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('financialChart').getContext('2d');
+  const chartData = <%- JSON.stringify(chartData) %>;
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: chartData.labels,
+      datasets: [
+        {
+          label: 'Revenue',
+          data: chartData.revenue,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        },
+        {
+          label: 'Taxes',
+          data: chartData.taxes,
+          borderColor: 'rgb(255, 99, 132)',
+          tension: 0.1
+        },
+        {
+          label: 'Employees',
+          data: chartData.employees,
+          borderColor: 'rgb(54, 162, 235)',
+          tension: 0.1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+<%- include('partials/_footer') %>

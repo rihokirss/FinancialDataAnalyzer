@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+<body>
+<%- include('partials/_header.ejs') %>
+  <main role="main" class="container mt-4">
+    <h2>Ettevõtete nimekiri</h2>
+    <% if (companies.length > 0) { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nimi</th>
+            <th>Registrikood</th>
+            <th>Aadress</th>
+            <th>Tagid</th>
+            <th>Tegevused</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% companies.forEach(company => { %>
+            <tr>
+              <td><%= company.name %></td>
+              <td><%= company.registrationCode %></td>
+              <td><%= company.address %></td>
+              <td><%= company.tags.join(', ') %></td>
+              <td>
+                <a href="/companies/edit/<%= company._id %>" class="btn btn-sm btn-primary">Muuda</a>
+                <button class="btn btn-sm btn-danger delete-company" data-id="<%= company._id %>">Kustuta</button>
+                <a href="/companies/data/<%= company._id %>" class="btn btn-sm btn-info">Andmed</a>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>Ettevõtteid ei leitud.</p>
+    <% } %>
+  </main>
+<%- include('partials/_footer.ejs') %>
+<script src="/js/company-list.js"></script>
+</body>
+</html>
