@@ -102,14 +102,35 @@ exports.getCompanyDetails = async (req, res) => {
 
 exports.compareCompanies = async (req, res) => {
     try {
-        const { companyIds } = req.body;
+        const { companyIds, startYear, endYear } = req.body;
         console.log(`Comparing companies with IDs: ${companyIds}`);
+        console.log(`Year range: ${startYear} - ${endYear}`);
 
         if (!Array.isArray(companyIds) || companyIds.length < 2) {
             return res.status(400).json({
                 success: false,
                 error: 'Võrdluseks on vaja valida vähemalt 2 ettevõtet'
             });
+        }
+
+        // Validate year range if provided
+        if (startYear && endYear) {
+            const start = parseInt(startYear);
+            const end = parseInt(endYear);
+
+            if (isNaN(start) || isNaN(end)) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Vigane aasta formaat'
+                });
+            }
+
+            if (end < start) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Lõppaasta ei saa olla varasem kui algusaasta'
+                });
+            }
         }
 
         const companies = await Company.find({
@@ -127,12 +148,25 @@ exports.compareCompanies = async (req, res) => {
         }
 
         const comparisonData = companies.map(company => {
-            console.log(`Financial data for company ${company.name}:`, JSON.stringify(company.financialData));
+            let financialData = company.financialData;
+
+            // Filter data by year range if provided
+            if (startYear && endYear) {
+                financialData = financialData.filter(data => {
+                    if (!data.period) return false;
+                    const [year] = data.period.split('-Q');
+                    const yearNum = parseInt(year);
+                    return yearNum >= parseInt(startYear) && yearNum <= parseInt(endYear);
+                });
+            }
+
+            console.log(`Financial data for company ${company.name}:`, JSON.stringify(financialData));
+
             return {
                 id: company._id,
                 name: company.name,
                 registrationCode: company.registrationCode,
-                financialData: company.financialData
+                financialData: financialData
             };
         });
 
@@ -155,7 +189,36 @@ exports.compareCompanies = async (req, res) => {
 exports.getComparisonTableView = async (req, res) => {
     try {
         console.log('Rendering comparison table view');
-        res.render('company-comparison-table');
+        const allTags = await Company.distinct('tags');
+        console.log('Tags before rendering:', allTags);
+        
+        const companies = req.query.companies?.split(',') || [];
+        let comparisonData = [];
+        
+        if (companies.length > 0) {
+            const companiesData = await Company.find({
+                '_id': { $in: companies }
+            });
+            
+            comparisonData = companiesData.map(company => ({
+                id: company._id,
+                name: company.name,
+                registrationCode: company.registrationCode,
+                financialData: company.financialData
+            }));
+        }
+
+        console.log('Rendering with data:', {
+            allTags,
+            companies,
+            comparisonData
+        });
+        
+        res.render('company-comparison-table', {
+            allTags,
+            companies,
+            comparisonData
+        });
     } catch (error) {
         console.error('Error rendering comparison table view:', error);
         console.error(error.stack);

@@ -13,7 +13,7 @@
 
 .comparison-table th:first-child {
     min-width: 200px;
-    text-align: left; 
+    text-align: left;
 }
 
 .metric-header {
@@ -24,4 +24,16 @@
 .company-header {
     text-align: center;
     background-color: #f8f9fa;
+}
+
+.date-filter {
+    margin-bottom: 20px;
+}
+
+.date-filter .form-group {
+    margin-bottom: 10px;
+}
+
+#applyDateFilter {
+    margin-bottom: 1rem;
 }

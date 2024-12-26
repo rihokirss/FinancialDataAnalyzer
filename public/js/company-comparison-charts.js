@@ -29,7 +29,10 @@ function initializeCharts(comparisonData) {
                 series,
                 chart: {
                     type: 'line',
-                    height: 350
+                    height: 350,
+                    zoom: {
+                        enabled: false
+                    }
                 },
                 title: {
                     text: metric.label,
@@ -39,6 +42,7 @@ function initializeCharts(comparisonData) {
                     type: 'category'
                 },
                 yaxis: {
+                    min: 0,
                     labels: {
                         formatter: (value) => value?.toLocaleString('et-EE')
                     }

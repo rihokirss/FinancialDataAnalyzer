@@ -4,13 +4,46 @@
 <div class="container mt-4">
     <h2>Ettevõtete võrdlus</h2>
 
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#companyModal">
+        Lisa/Eemalda ettevõtteid
+    </button>
+
+    <% console.log('Rendering modal, allTags:', allTags); %>
+    <%- include('modal/company-selector-modal') %>
+    <% console.log('Modal rendered'); %>
+
+    <!-- Date Range Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Ajaperioodi filter</h5>
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="startDate">Algusaasta</label>
+                        <input type="number" class="form-control" id="startDate" min="2000" max="2099">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="endDate">Lõppaasta</label>
+                        <input type="number" class="form-control" id="endDate" min="2000" max="2099">
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button id="applyDateFilter" class="btn btn-primary">Rakenda</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Charts Section -->
     <div class="row mt-4">
         <% ['revenue', 'taxes', 'laborTaxes', 'employees'].forEach(function(metric) { %>
-            <div class="col-md-6 mb-4">
+            <div class="col-12 mb-4">
                 <div class="card">
                     <div class="card-body">
                         <div id="<%= metric %>Chart"></div>
+                        <div id="<%= metric %>Table"></div>
                     </div>
                 </div>
             </div>
