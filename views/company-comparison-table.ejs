@@ -4,6 +4,20 @@
 <div class="container mt-4">
     <h2>Ettevõtete võrdlus</h2>
 
+    <!-- Charts Section -->
+    <div class="row mt-4">
+        <% ['revenue', 'taxes', 'laborTaxes', 'employees'].forEach(function(metric) { %>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="<%= metric %>Chart"></div>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+
+    <!-- Tables Section -->
     <div class="table-responsive">
         <table class="table table-bordered comparison-table">
             <thead>
@@ -26,6 +40,8 @@
 </div>
 
 <link href="/css/company-comparison-table.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="/js/company-comparison-charts.js"></script>
 <script src="/js/company-comparison-table.js"></script>
 
 <%- include('partials/_footer') %>
