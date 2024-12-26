@@ -59,7 +59,7 @@ router.post('/download-csv', isAuthenticated, async (req, res) => {
 
 router.post('/update-included-companies', companyController.updateIncludedCompanies);
 
-// Add this new route
 router.get('/data/:id', companyController.getCompanyData);
+router.get('/data/:id/filter', companyController.getFilteredCompanyData);
 
 module.exports = router;

@@ -225,3 +225,70 @@ exports.getCompanyData = async (req, res) => {
     res.status(500).render('error', { error: 'Viga ettevõtte andmete laadimisel. Palun proovige uuesti.' });
   }
 };
+
+exports.getFilteredCompanyData = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const companyId = req.params.id;
+
+    console.log(`Fetching filtered data for company ${companyId} from ${startDate} to ${endDate}`);
+
+    const company = await Company.findById(companyId);
+    if (!company) {
+      console.error(`Company not found with ID: ${companyId}`);
+      return res.status(404).json({ error: 'Ettevõtet ei leitud.' });
+    }
+
+    console.log('Found company financial data:', company.financialData);
+
+    // Filter financial data based on year range
+    const filteredData = company.financialData.filter(data => {
+      if (!data || !data.period) return false;
+      const year = parseInt(data.period.split('-')[0]);
+      console.log('Checking period:', data.period, 'Year:', year);
+      return year >= parseInt(startDate) && year <= parseInt(endDate);
+    });
+
+    console.log('All periods before filtering:', company.financialData.map(d => d.period));
+    console.log('Filtered data:', filteredData);
+
+    // Sort filtered data by period
+    filteredData.sort((a, b) => {
+      const yearA = parseInt(a.period.split('-')[0]);
+      const yearB = parseInt(b.period.split('-')[0]);
+      return yearA - yearB;
+    });
+
+    console.log(`Found ${filteredData.length} records within year range`);
+
+    // Prepare chart data
+    const chartData = {
+      labels: [],
+      revenue: [],
+      taxes: [],
+      employees: []
+    };
+
+    filteredData.forEach(data => {
+      chartData.labels.push(data.period);
+      chartData.revenue.push(data.revenue);
+      chartData.taxes.push(data.taxes);
+      chartData.employees.push(data.employees);
+    });
+
+    console.log(`Prepared filtered chart data for company ${company.name}`);
+    res.json({
+      success: true,
+      financialData: filteredData,
+      chartData
+    });
+
+  } catch (error) {
+    console.error('Viga filtreeritud andmete laadimisel:', error);
+    console.error(error.stack);
+    res.status(500).json({
+      success: false,
+      error: 'Viga andmete filtreerimisel: ' + error.message
+    });
+  }
+};

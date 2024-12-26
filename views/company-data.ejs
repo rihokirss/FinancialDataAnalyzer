@@ -15,6 +15,18 @@
     </div>
   </div>
 
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="input-group">
+        <span class="input-group-text">Perioodi algus</span>
+        <input type="number" id="startDate" class="form-control" min="2000" max="2099" step="1" value="2023">
+        <span class="input-group-text">Perioodi lõpp</span>
+        <input type="number" id="endDate" class="form-control" min="2000" max="2099" step="1" value="2024">
+        <button class="btn btn-primary" id="filterDates">Filtreeri</button>
+      </div>
+    </div>
+  </div>
+
   <h1><%= company.name %> - Financial Data</h1>
 
   <div class="row mt-4">
