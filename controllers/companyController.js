@@ -1,6 +1,7 @@
 const Company = require('../models/Company');
 const scraperService = require('../services/scraperService');
 const ScraperSettings = require('../models/ScraperSettings');
+const exportService = require('../services/exportService');
 
 exports.addCompany = async (req, res) => {
   try {
@@ -290,5 +291,49 @@ exports.getFilteredCompanyData = async (req, res) => {
       success: false,
       error: 'Viga andmete filtreerimisel: ' + error.message
     });
+  }
+};
+
+exports.exportCompanyData = async (req, res) => {
+  try {
+    console.log(`Exporting data for company ID: ${req.params.id}`);
+    const company = await Company.findById(req.params.id);
+    if (!company) {
+      console.error(`Company not found with ID: ${req.params.id}`);
+      return res.status(404).json({ error: 'Ettevõtet ei leitud.' });
+    }
+
+    const { startDate, endDate } = req.query;
+    let financialData = company.financialData;
+
+    // Apply date filtering if provided
+    if (startDate && endDate) {
+      console.log(`Filtering data between years ${startDate} and ${endDate}`);
+      financialData = financialData.filter(data => {
+        if (!data || !data.period) return false;
+        const year = parseInt(data.period.split('-')[0]);
+        return year >= parseInt(startDate) && year <= parseInt(endDate);
+      });
+    }
+
+    const exportData = {
+      ...company.toObject(),
+      financialData
+    };
+
+    console.log(`Generating CSV for ${financialData.length} records`);
+    const csvBuffer = exportService.generateFinancialDataCsv(exportData);
+
+    const filename = `${company.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_financial_data.csv`;
+    console.log(`Sending CSV file: ${filename}`);
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+    res.send(csvBuffer);
+
+  } catch (error) {
+    console.error('Viga andmete eksportimisel:', error);
+    console.error(error.stack);
+    res.status(500).json({ error: 'Viga andmete eksportimisel: ' + error.message });
   }
 };

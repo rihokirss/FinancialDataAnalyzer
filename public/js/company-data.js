@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const startDate = document.getElementById('startDate');
     const endDate = document.getElementById('endDate');
     const filterButton = document.getElementById('filterDates');
+    const exportButton = document.getElementById('exportData');
     let chart = null;
 
     if (companySelector) {
@@ -54,6 +55,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error fetching filtered data:', error);
                 alert('Viga andmete filtreerimisel: ' + error.message);
             }
+        });
+    }
+
+    if (exportButton) {
+        exportButton.addEventListener('click', function() {
+            const companyId = companySelector.value;
+            let url = `/companies/data/${companyId}/export`;
+
+            // Add date range parameters if they exist
+            const start = startDate.value;
+            const end = endDate.value;
+            if (start && end) {
+                url += `?startDate=${start}&endDate=${end}`;
+            }
+
+            // Trigger file download
+            window.location.href = url;
         });
     }
 

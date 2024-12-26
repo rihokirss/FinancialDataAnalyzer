@@ -61,5 +61,6 @@ router.post('/update-included-companies', companyController.updateIncludedCompan
 
 router.get('/data/:id', companyController.getCompanyData);
 router.get('/data/:id/filter', companyController.getFilteredCompanyData);
+router.get('/data/:id/export', companyController.exportCompanyData);
 
 module.exports = router;
