@@ -2,6 +2,19 @@
 <%- include('partials/_header') %>
 
 <div class="container mt-5">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <select id="companySelector" class="form-select">
+        <option value="">Vali ettevõte</option>
+        <% companies.forEach(c => { %>
+          <option value="<%= c._id %>" <%= company._id.toString() === c._id.toString() ? 'selected' : '' %>>
+            <%= c.name %> (<%= c.registrationCode %>)
+          </option>
+        <% }); %>
+      </select>
+    </div>
+  </div>
+
   <h1><%= company.name %> - Financial Data</h1>
 
   <div class="row mt-4">
@@ -80,5 +93,6 @@
     }
   });
 </script>
+<script src="/js/company-data.js"></script>
 
 <%- include('partials/_footer') %>

@@ -191,13 +191,16 @@ exports.downloadAndParseCSV = async (req, res) => {
   }
 };
 
-// Add this function to the existing exports
 exports.getCompanyData = async (req, res) => {
   try {
     const company = await Company.findById(req.params.id);
     if (!company) {
       return res.status(404).render('error', { error: 'Ettevõtet ei leitud.' });
     }
+
+    // Fetch all companies for the selector
+    const companies = await Company.find().sort('name');
+    console.log(`Fetched ${companies.length} companies for selector`);
 
     // Prepare data for the chart
     const chartData = {
@@ -214,7 +217,8 @@ exports.getCompanyData = async (req, res) => {
       chartData.employees.push(data.employees);
     });
 
-    res.render('company-data', { company, chartData });
+    console.log(`Prepared chart data for company ${company.name}`);
+    res.render('company-data', { company, companies, chartData });
   } catch (error) {
     console.error('Viga ettevõtte andmete laadimisel:', error);
     console.error(error.stack);
