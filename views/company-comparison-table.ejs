@@ -1,0 +1,31 @@
+<%- include('partials/_head') %>
+<%- include('partials/_header') %>
+
+<div class="container mt-4">
+    <h2>Ettevõtete võrdlus</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered comparison-table">
+            <thead>
+                <tr>
+                    <th>Periood</th>
+                    <!-- Company headers will be inserted here dynamically -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Comparison data will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <a href="/comparison" class="btn btn-primary">
+            Tagasi ettevõtete valikusse
+        </a>
+    </div>
+</div>
+
+<link href="/css/company-comparison-table.css" rel="stylesheet">
+<script src="/js/company-comparison-table.js"></script>
+
+<%- include('partials/_footer') %>

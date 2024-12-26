@@ -138,4 +138,16 @@ document.addEventListener('DOMContentLoaded', function() {
         searchResults.innerHTML = '';
         searchInput.value = '';
     }
+
+    const compareButton = document.createElement('button');
+    compareButton.className = 'btn btn-primary mt-3';
+    compareButton.textContent = 'Võrdle valitud ettevõtteid';
+    compareButton.addEventListener('click', () => {
+        if (selectedCompanyIds.size < 2) {
+            alert('Vähemalt kaks ettevõtet peavad olema valitud võrdluseks');
+            return;
+        }
+        window.location.href = `/comparison/table?companies=${Array.from(selectedCompanyIds).join(',')}`;
+    });
+    selectedCompanies.parentNode.appendChild(compareButton);
 });

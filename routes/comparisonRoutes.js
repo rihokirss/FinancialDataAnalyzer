@@ -5,5 +5,7 @@ const { isAuthenticated } = require('./middleware/authMiddleware');
 
 router.get('/', isAuthenticated, comparisonController.getComparisonPage);
 router.get('/search', isAuthenticated, comparisonController.searchCompanies);
+router.get('/table', isAuthenticated, comparisonController.getComparisonTableView);
+router.post('/compare', isAuthenticated, comparisonController.compareCompanies);
 
 module.exports = router;

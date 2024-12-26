@@ -76,7 +76,7 @@ exports.getCompanyDetails = async (req, res) => {
         console.log(`Fetching details for company ID: ${id}`);
 
         const company = await Company.findById(id);
-        
+
         if (!company) {
             console.error(`Company with ID ${id} not found`);
             return res.status(404).json({
@@ -126,12 +126,17 @@ exports.compareCompanies = async (req, res) => {
             });
         }
 
-        const comparisonData = companies.map(company => ({
-            id: company._id,
-            name: company.name,
-            registrationCode: company.registrationCode,
-            financialData: company.financialData
-        }));
+        const comparisonData = companies.map(company => {
+            console.log(`Financial data for company ${company.name}:`, JSON.stringify(company.financialData));
+            return {
+                id: company._id,
+                name: company.name,
+                registrationCode: company.registrationCode,
+                financialData: company.financialData
+            };
+        });
+
+        console.log('Full comparison data:', JSON.stringify(comparisonData));
 
         res.json({
             success: true,
@@ -143,6 +148,19 @@ exports.compareCompanies = async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Viga ettevõtete võrdlemisel: ' + error.message
+        });
+    }
+};
+
+exports.getComparisonTableView = async (req, res) => {
+    try {
+        console.log('Rendering comparison table view');
+        res.render('company-comparison-table');
+    } catch (error) {
+        console.error('Error rendering comparison table view:', error);
+        console.error(error.stack);
+        res.status(500).render('error', {
+            error: 'Viga võrdlustabeli kuvamisel: ' + error.message
         });
     }
 };

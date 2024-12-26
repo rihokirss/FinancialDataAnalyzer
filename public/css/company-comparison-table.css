@@ -1,0 +1,27 @@
+.comparison-table {
+    margin-top: 10px;
+}
+
+.comparison-table th {
+    min-width: 85px;
+    background-color: #f8f9fa;
+}
+
+.comparison-table td {
+    text-align: right;
+}
+
+.comparison-table th:first-child {
+    min-width: 200px;
+    text-align: left; 
+}
+
+.metric-header {
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+
+.company-header {
+    text-align: center;
+    background-color: #f8f9fa;
+}
