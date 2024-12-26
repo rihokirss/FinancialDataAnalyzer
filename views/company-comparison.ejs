@@ -1,0 +1,59 @@
+<%- include('partials/_head') %>
+<%- include('partials/_header') %>
+
+<div class="container mt-4">
+    <h2>Ettevõtete võrdlus</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    Vali ettevõtted võrdlemiseks
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="companySearch" class="form-label">Otsi ettevõtet</label>
+                        <input type="text" class="form-control" id="companySearch" placeholder="Sisesta ettevõtte nimi või registrikood">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valitud ettevõtted</label>
+                        <div id="selectedCompanies" class="list-group">
+                            <!-- Selected companies will be added here dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Otsingutulemused</label>
+                        <div id="searchResults" class="list-group">
+                            <!-- Search results will be added here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Filtrid
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Vali tagid</label>
+                        <select class="form-select" id="tagFilter" multiple>
+                            <% allTags.forEach(tag => { %>
+                                <option value="<%= tag %>"><%= tag %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="/css/company-comparison.css" rel="stylesheet">
+<script src="/js/company-comparison.js"></script>
+
+<%- include('partials/_footer') %>

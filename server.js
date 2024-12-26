@@ -77,6 +77,9 @@ app.use(authRoutes);
 // Company Routes
 app.use('/companies', companyRoutes);
 
+// Comparison Routes
+app.use('/comparison', require('./routes/comparisonRoutes'));
+
 // Root path response
 app.get("/", (req, res) => {
   res.render("index");

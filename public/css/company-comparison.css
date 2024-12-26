@@ -1,0 +1,23 @@
+#searchResults {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#selectedCompanies {
+    min-height: 100px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
+
+.list-group-item {
+    transition: background-color 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+#tagFilter {
+    height: 150px;
+}
