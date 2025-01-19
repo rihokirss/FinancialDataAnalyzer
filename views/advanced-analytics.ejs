@@ -48,9 +48,34 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Chart Section -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col">
+                    <select class="form-select" id="metricSelector">
+                        <% if (metrics && metrics.length) { %>
+                            <% metrics.forEach((m, idx) => { %>
+                              <option value="<%= m.id %>" <%= idx === 0 ? 'selected' : '' %>>
+                                <%= m.name %>
+                              </option>
+                            <% }) %>
+                          <% } else { %>
+                            <option value="">Pole mõõdikuid</option>
+                          <% } %>
+                        <!-- Will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+            <div id="ratiosChart" style="height: 400px;"></div>
+        </div>
+    </div>
 </div>
 
 <link href="/css/advanced-analytics.css" rel="stylesheet">
 <script src="/js/advanced-analytics.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="/js/advanced-analytics-charts.js"></script>
 
 <%- include('partials/_footer') %>

@@ -16,7 +16,7 @@ const calculateProfitabilityRatios = (revenue, costs = 0, taxes = 0) => {
 
 const calculateEfficiencyRatios = (revenue, employees) => {
     return {
-        revenuePerEmployee: employees > 0 ? revenue / employees : 0,
+        revenuePerEmployee: employees > 0 ? revenue / (employees * 3) : 0,
         employeeCost: employees > 0 ? (revenue * 0.4) / employees : 0 // Mocking 40% of revenue as employee cost
     };
 };
@@ -45,14 +45,20 @@ const calculateAllRatios = (financialData) => {
             const efficiency = calculateEfficiencyRatios(period.revenue, period.employees);
             const taxEfficiency = calculateTaxEfficiencyRatios(period.revenue, period.taxes, period.laborTaxes);
 
-            return {
-                period: period.period,
-                ratios: {
+            // Rakenda ümardamine kõigile arvutatud suhtarvudele
+            const roundedRatios = Object.fromEntries(
+                Object.entries({
                     ...profitability,
                     ...efficiency,
                     ...taxEfficiency
-                }
+                }).map(([key, value]) => [key, value !== null ? parseFloat(value.toFixed(2)) : null])
+            );
+
+            return {
+                period: period.period,
+                ratios: roundedRatios
             };
+
         });
 
         console.log('Successfully calculated all financial ratios');

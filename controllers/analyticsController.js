@@ -1,11 +1,14 @@
 const Company = require('../models/Company');
 const financialRatioService = require('../services/financialRatioService');
+const advancedAnalyticsChartService = require('../services/advancedAnalyticsChartService');
 
 exports.getAdvancedAnalytics = async (req, res) => {
     try {
         const companies = await Company.find({});
+        const metrics = advancedAnalyticsChartService.getRatioMetrics();
         res.render('advanced-analytics', {
             companies: companies,
+            metrics: metrics,
             session: req.session
         });
     } catch (error) {
@@ -71,6 +74,66 @@ exports.getAllCompaniesRatios = async (req, res) => {
         res.status(500).json({
             success: false,
             error: `Viga suhtarvude arvutamisel: ${error.message}`
+        });
+    }
+};
+
+exports.getRatioChartData = async (req, res) => {
+    try {
+        const { startYear, endYear, metric } = req.query;
+        console.log(`Generating chart data for metric ${metric} between ${startYear} and ${endYear}`);
+
+        if (!metric) {
+            return res.status(400).json({
+                success: false,
+                error: 'Suhtarvu metrika on kohustuslik'
+            });
+        }
+
+        const companies = await Company.find({});
+        const ratiosData = [];
+
+        for (const company of companies) {
+            if (!company.financialData || company.financialData.length === 0) {
+                console.log(`Skipping company ${company.name} - no financial data available`);
+                continue;
+            }
+
+            let financialData = company.financialData;
+
+            // Filter by date range if provided
+            if (startYear && endYear) {
+                financialData = financialData.filter(data => {
+                    if (!data.period) return false;
+                    const year = parseInt(data.period.split('-')[0]);
+                    return year >= parseInt(startYear) && year <= parseInt(endYear);
+                });
+            }
+
+            const ratios = financialRatioService.calculateAllRatios(financialData);
+
+            ratiosData.push({
+                companyId: company._id,
+                companyName: company.name,
+                registrationCode: company.registrationCode,
+                ratios: ratios
+            });
+        }
+
+        console.log(`Formatting chart data for ${ratiosData.length} companies`);
+        const chartData = advancedAnalyticsChartService.formatRatioChartData(ratiosData, metric);
+
+        res.json({
+            success: true,
+            data: chartData,
+            metrics: advancedAnalyticsChartService.getRatioMetrics()
+        });
+
+    } catch (error) {
+        console.error('Error generating chart data:', error.stack);
+        res.status(500).json({
+            success: false,
+            error: `Viga graafikute andmete genereerimisel: ${error.message}`
         });
     }
 };
