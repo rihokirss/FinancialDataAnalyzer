@@ -19,9 +19,9 @@
     <div class="col-md-6">
       <div class="input-group">
         <span class="input-group-text">Perioodi algus</span>
-        <input type="number" id="startDate" class="form-control" min="2000" max="2099" step="1" value="2023">
+        <input type="number" id="startDate" class="form-control" min="2000" max="2099" step="1" value="<%= startYear %>">
         <span class="input-group-text">Perioodi lõpp</span>
-        <input type="number" id="endDate" class="form-control" min="2000" max="2099" step="1" value="2024">
+        <input type="number" id="endDate" class="form-control" min="2000" max="2099" step="1" value="<%= endYear %>">
         <button class="btn btn-primary" id="filterDates">Filtreeri</button>
       </div>
     </div>
@@ -35,31 +35,23 @@
     </div>
   </div>
 
-  <h1><%= company.name %> - Financial Data</h1>
+  <h1><%= company.name %></h1>
 
   <div class="row mt-4">
     <div class="col-md-12">
-      <h2>Quarterly Data</h2>
+      <h2>Kvartaalsed andmed</h2>
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Period</th>
-            <th>Taxes</th>
-            <th>Labor Taxes</th>
-            <th>Revenue</th>
-            <th>Employees</th>
+            <th>Periood</th>
+            <th>Maksud</th>
+            <th>Tööjõumaksud</th>
+            <th>Käive</th>
+            <th>Töötajaid</th>
           </tr>
         </thead>
         <tbody>
-          <% company.financialData.forEach(data => { %>
-            <tr>
-              <td><%= data.period %></td>
-              <td><%= data.taxes ? data.taxes.toLocaleString('et-EE') : 'N/A' %> €</td>
-              <td><%= data.laborTaxes ? data.laborTaxes.toLocaleString('et-EE') : 'N/A' %> €</td>
-              <td><%= data.revenue ? data.revenue.toLocaleString('et-EE') : 'N/A' %> €</td>
-              <td><%= data.employees ?? 'N/A' %></td>
-            </tr>
-          <% }); %>
+            <!-- Will be populated by JavaScript -->
         </tbody>
       </table>
     </div>
@@ -67,52 +59,46 @@
 
   <div class="row mt-4">
     <div class="col-md-12">
-      <h2>Historical Trends</h2>
-      <canvas id="financialChart"></canvas>
+        <h2>Ajaloolised trendid</h2>
+        <div id="financialChart"></div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Finantssuhtarvud</h2>
+        <div class="table-responsive">
+            <table class="table table-striped" id="ratiosTable">
+                <thead>
+                    <tr>
+                        <th>Periood</th>
+                        <th>Brutokasumi marginaal (%)</th>
+                        <th>Netokasumi marginaal (%)</th>
+                        <th>Käive töötaja kohta (€)</th>
+                        <th>Tööjõukulu (€)</th>
+                        <th>Maksude osakaal käibest (%)</th>
+                        <th>Tööjõumaksude osakaal käibest (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Suhtarvude trendid</h2>
+        <div id="ratiosChart"></div>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const ctx = document.getElementById('financialChart').getContext('2d');
-  const chartData = <%- JSON.stringify(chartData) %>;
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: chartData.labels,
-      datasets: [
-        {
-          label: 'Revenue',
-          data: chartData.revenue,
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        },
-        {
-          label: 'Taxes',
-          data: chartData.taxes,
-          borderColor: 'rgb(255, 99, 132)',
-          tension: 0.1
-        },
-        {
-          label: 'Employees',
-          data: chartData.employees,
-          borderColor: 'rgb(54, 162, 235)',
-          tension: 0.1
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-</script>
 <script src="/js/company-data.js"></script>
+<script src="/js/financial-ratios.js"></script>
 
 <%- include('partials/_footer') %>

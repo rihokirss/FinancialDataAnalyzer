@@ -199,27 +199,52 @@ exports.getCompanyData = async (req, res) => {
       return res.status(404).render('error', { error: 'Ettevõtet ei leitud.' });
     }
 
-    // Fetch all companies for the selector
     const companies = await Company.find().sort('name');
     console.log(`Fetched ${companies.length} companies for selector`);
 
-    // Prepare data for the chart
+    // Get current year and previous year for default filter
+    const currentYear = new Date().getFullYear();
+    const previousYear = currentYear - 1;
+
+    // Sort and filter data by default
+    const filteredData = company.financialData
+      .filter(data => {
+        if (!data || !data.period) return false;
+        const year = parseInt(data.period.split('-')[0]);
+        return year >= previousYear && year <= currentYear;
+      })
+      .sort((a, b) => {
+        const [yearA, quarterA] = a.period.split('-Q');
+        const [yearB, quarterB] = b.period.split('-Q');
+        if (yearA !== yearB) return yearA - yearB;
+        return quarterA - quarterB;
+      });
+
     const chartData = {
-      labels: [],
-      revenue: [],
-      taxes: [],
-      employees: []
+      labels: filteredData.map(d => d.period),
+      revenue: filteredData.map(d => d.revenue),
+      taxes: filteredData.map(d => d.taxes),
+      laborTaxes: filteredData.map(d => d.laborTaxes || 0),
+      employees: filteredData.map(d => d.employees)
     };
 
-    company.financialData.forEach(data => {
-      chartData.labels.push(data.period);
-      chartData.revenue.push(data.revenue);
-      chartData.taxes.push(data.taxes);
-      chartData.employees.push(data.employees);
+    console.log('Preparing chart data:', {
+      labels: chartData.labels,
+      revenue: chartData.revenue,
+      taxes: chartData.taxes,
+      laborTaxes: chartData.laborTaxes,
+      employees: chartData.employees
     });
 
     console.log(`Prepared chart data for company ${company.name}`);
-    res.render('company-data', { company, companies, chartData });
+    res.render('company-data', { 
+      company,
+      companies,
+      chartData,
+      startYear: previousYear,
+      endYear: currentYear,
+      financialData: filteredData
+    });
   } catch (error) {
     console.error('Viga ettevõtte andmete laadimisel:', error);
     console.error(error.stack);
@@ -242,46 +267,49 @@ exports.getFilteredCompanyData = async (req, res) => {
 
     console.log('Found company financial data:', company.financialData);
 
-    // Filter financial data based on year range
-    const filteredData = company.financialData.filter(data => {
-      if (!data || !data.period) return false;
-      const year = parseInt(data.period.split('-')[0]);
-      console.log('Checking period:', data.period, 'Year:', year);
-      return year >= parseInt(startDate) && year <= parseInt(endDate);
-    });
+    // Filter and sort financial data
+    const sortedData = company.financialData
+      .filter(data => {
+        if (!data || !data.period) return false;
+        const year = parseInt(data.period.split('-')[0]);
+        console.log('Checking period:', data.period, 'Year:', year);
+        return year >= parseInt(startDate) && year <= parseInt(endDate);
+      })
+      .sort((a, b) => {
+        const [yearA, quarterA] = a.period.split('-Q');
+        const [yearB, quarterB] = b.period.split('-Q');
+        if (yearA !== yearB) {
+          return yearA - yearB;
+        }
+        return quarterA - quarterB;
+      });
 
     console.log('All periods before filtering:', company.financialData.map(d => d.period));
-    console.log('Filtered data:', filteredData);
+    console.log('Sorted and filtered data:', sortedData);
+    console.log(`Found ${sortedData.length} records within year range`);
 
-    // Sort filtered data by period
-    filteredData.sort((a, b) => {
-      const yearA = parseInt(a.period.split('-')[0]);
-      const yearB = parseInt(b.period.split('-')[0]);
-      return yearA - yearB;
-    });
-
-    console.log(`Found ${filteredData.length} records within year range`);
-
-    // Prepare chart data
+    // Prepare clean chart data
     const chartData = {
-      labels: [],
-      revenue: [],
-      taxes: [],
-      employees: []
+      labels: sortedData.map(data => data.period),
+      revenue: sortedData.map(data => data.revenue),
+      taxes: sortedData.map(data => data.taxes),
+      laborTaxes: sortedData.map(data => data.laborTaxes || 0),
+      employees: sortedData.map(data => data.employees)
     };
 
-    filteredData.forEach(data => {
-      chartData.labels.push(data.period);
-      chartData.revenue.push(data.revenue);
-      chartData.taxes.push(data.taxes);
-      chartData.employees.push(data.employees);
+    console.log('Preparing chart data:', {
+      labels: chartData.labels,
+      revenue: chartData.revenue,
+      taxes: chartData.taxes,
+      laborTaxes: chartData.laborTaxes,
+      employees: chartData.employees
     });
 
     console.log(`Prepared filtered chart data for company ${company.name}`);
     res.json({
       success: true,
-      financialData: filteredData,
-      chartData
+      financialData: sortedData,
+      chartData: chartData
     });
 
   } catch (error) {

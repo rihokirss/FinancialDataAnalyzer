@@ -1,7 +1,7 @@
 {
-  "name": "FinData",
+  "name": "findata",
   "version": "1.0.0",
-  "description": "",
+  "description": "```markdown # FinData",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -31,5 +31,6 @@
     "mongoose": "^8.1.1",
     "node-cron": "^3.0.3",
     "openai": "^4.63.0"
-  }
+  },
+  "devDependencies": {}
 }

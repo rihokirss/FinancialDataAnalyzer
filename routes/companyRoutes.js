@@ -4,7 +4,8 @@ const companyController = require('../controllers/companyController');
 const ScraperSettings = require('../models/ScraperSettings');
 const { scheduleScraperJob } = require('../services/cronJobs');
 const { isAuthenticated } = require('./middleware/authMiddleware');
-const scraperService = require('../services/scraperService');  // Add this line
+const scraperService = require('../services/scraperService');
+const financialRatioController = require('../controllers/financialRatioController');
 
 router.post('/add', companyController.addCompany);
 router.get('/list', companyController.listCompanies);
@@ -62,5 +63,8 @@ router.post('/update-included-companies', companyController.updateIncludedCompan
 router.get('/data/:id', companyController.getCompanyData);
 router.get('/data/:id/filter', companyController.getFilteredCompanyData);
 router.get('/data/:id/export', companyController.exportCompanyData);
+
+router.get('/ratios/:id', financialRatioController.getCompanyRatios);
+router.get('/ratios/:id/filter', financialRatioController.getFilteredRatios);
 
 module.exports = router;
