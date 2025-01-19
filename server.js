@@ -6,6 +6,7 @@ const session = require("express-session");
 const MongoStore = require('connect-mongo');
 const authRoutes = require("./routes/authRoutes");
 const companyRoutes = require('./routes/companyRoutes'); // Importing the company routes
+const analyticsRoutes = require('./routes/analyticsRoutes');
 const { initializeScraperJob } = require('./services/cronJobs'); // Added for cron job initialization
 
 if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
@@ -79,6 +80,9 @@ app.use('/companies', companyRoutes);
 
 // Comparison Routes
 app.use('/comparison', require('./routes/comparisonRoutes'));
+
+// Analytics Routes
+app.use('/analytics', analyticsRoutes);
 
 // Root path response
 app.get("/", (req, res) => {

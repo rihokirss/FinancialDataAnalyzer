@@ -1,0 +1,19 @@
+.table-responsive {
+    margin-top: 20px;
+}
+
+#ratiosTable th {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+#ratiosTable td {
+    text-align: right;
+}
+
+#ratiosTable td:first-child,
+#ratiosTable td:nth-child(2) {
+    text-align: left;
+}

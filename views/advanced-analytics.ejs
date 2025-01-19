@@ -1,0 +1,56 @@
+<%- include('partials/_head') %>
+<%- include('partials/_header') %>
+
+<div class="container mt-4">
+    <h2>Ettevõtete finantsilised suhtarvud</h2>
+
+    <!-- Date Range Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Ajaperioodi filter</h5>
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="startDate">Algusaasta</label>
+                        <input type="number" class="form-control" id="startDate" min="2000" max="2099">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="endDate">Lõppaasta</label>
+                        <input type="number" class="form-control" id="endDate" min="2000" max="2099">
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button id="applyDateFilter" class="btn btn-primary">Rakenda</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ratios Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="ratiosTable">
+            <thead>
+                <tr>
+                    <th>Ettevõte</th>
+                    <th>Periood</th>
+                    <th>Brutokasumi marginaal (%)</th>
+                    <th>Netokasumi marginaal (%)</th>
+                    <th>Käive töötaja kohta (€)</th>
+                    <th>Tööjõukulu (€)</th>
+                    <th>Maksude osakaal käibest (%)</th>
+                    <th>Tööjõumaksude osakaal käibest (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<link href="/css/advanced-analytics.css" rel="stylesheet">
+<script src="/js/advanced-analytics.js"></script>
+
+<%- include('partials/_footer') %>
